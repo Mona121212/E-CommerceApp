@@ -13,6 +13,25 @@ import SearchBar from "@/components/search-bar";
 import ProductCarousel from "@/components/product-carousel";
 import { useAuth } from "@/context/auth-context";
 
+// Extract username from email (part before @)
+const getUsername = (user: any) => {
+  if (user?.displayName) {
+    return user.displayName;
+  }
+  if (user?.email) {
+    return user.email.split("@")[0];
+  }
+  return "Guest";
+};
+
+// Get greeting based on time of day
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 18) return "Good afternoon";
+  return "Good evening";
+};
+
 export default function Index() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -20,25 +39,6 @@ export default function Index() {
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [categoryProducts, setCategoryProducts] = useState<Product[]>([]);
-
-  // Extract username from email (part before @)
-  const getUsername = () => {
-    if (user?.displayName) {
-      return user.displayName;
-    }
-    if (user?.email) {
-      return user.email.split("@")[0];
-    }
-    return "Guest";
-  };
-
-  // Get greeting based on time of day
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 18) return "Good afternoon";
-    return "Good evening";
-  };
 
   const loadData = async () => {
     try {
@@ -87,17 +87,21 @@ export default function Index() {
 
   return (
     <View style={styles.wrapper}>
+      <Stack.Screen
+        options={{
+          headerTitle: () => (
+            <Text style={styles.headerTitle}>
+              {getGreeting()}, <Text style={styles.headerUsername}>{getUsername(user)}</Text>
+            </Text>
+          ),
+        }}
+      />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={true}
         nestedScrollEnabled={true}
       >
-        <View style={styles.greetingContainer}>
-          <Text style={styles.greetingText}>
-            {getGreeting()}, <Text style={styles.usernameText}>{getUsername()}</Text>
-          </Text>
-        </View>
         <View style={styles.searchBarContainer}>
           <SearchBar
             onSearch={(query) => {
@@ -156,18 +160,13 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 20,
   },
-  greetingContainer: {
-    marginBottom: 20,
-    paddingVertical: 4,
-  },
-  greetingText: {
-    fontSize: 24,
+  headerTitle: {
+    fontSize: 18,
     fontWeight: "600",
     color: "#1a1a1a",
-    letterSpacing: -0.5,
   },
-  usernameText: {
-    fontSize: 24,
+  headerUsername: {
+    fontSize: 18,
     fontWeight: "700",
     color: "#5B37B7",
   },
