@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import {
   fetchAllCategories,
@@ -86,7 +86,13 @@ export default function Index() {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.wrapper}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={true}
+        nestedScrollEnabled={true}
+      >
         <View style={styles.greetingContainer}>
           <Text style={styles.greetingText}>
             {getGreeting()}, <Text style={styles.usernameText}>{getUsername()}</Text>
@@ -130,15 +136,22 @@ export default function Index() {
             </Text>
           )}
         </View>
-      </View>
+      </ScrollView>
+    </View>
   );
 }
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
     flex: 1,
     backgroundColor: "#f9f9f9",
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
     paddingHorizontal: 16,
     paddingTop: 16,
+    paddingBottom: 20,
   },
   greetingContainer: {
     marginBottom: 16,

@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
   ScrollView,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, Stack } from "expo-router";
 import { useAuth } from "@/context/auth-context";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -54,11 +54,29 @@ export default function SignUp() {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.scrollContainer}
-      keyboardShouldPersistTaps="handled"
-    >
-      <View style={styles.container}>
+    <>
+      <Stack.Screen
+        options={{
+          headerTitle: "",
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={styles.headerButton}
+            >
+              <Ionicons name="arrow-back" size={24} color="#333" />
+            </TouchableOpacity>
+          ),
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerShadowVisible: false,
+        }}
+      />
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.container}>
         <View style={styles.card}>
           <View style={styles.iconContainer}>
             <View style={styles.iconCircle}>
@@ -170,10 +188,15 @@ export default function SignUp() {
         </View>
       </View>
     </ScrollView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
+  headerButton: {
+    padding: 8,
+    marginLeft: 8,
+  },
   scrollContainer: {
     flexGrow: 1,
   },

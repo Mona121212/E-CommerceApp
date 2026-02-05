@@ -17,7 +17,7 @@ const ProductCarousel = ({ products, title, style }: ProductCarouselProps) => {
   }
   const handleProductPress = (product: Product) => {
     router.push({
-      pathname: `/product/${product.id}`,
+      pathname: `/(tabs)/product/${product.id}`,
       params: { initialData: JSON.stringify(product) },
     });
   };
