@@ -1,134 +1,43 @@
-import { Text, View, StyleSheet } from "react-native";
-import React, { useEffect, useState } from "react";
-import {
-  fetchAllCategories,
-  fetchFeaturedProducts,
-  fetchFeaturedProductsByCategory,
-} from "@/api/product-service";
-import CartIcon from "@/components/cart-icon";
-import type { Product } from "@/types";
-import { router, Stack } from "expo-router";
-import CategoryPill from "@/components/category-pill";
-import SearchBar from "@/components/search-bar";
-import ProductCarousel from "@/components/product-carousel";
+import { useEffect } from "react";
+import { useRouter, useSegments } from "expo-router";
+import { useAuth } from "@/context/auth-context";
+import { View, ActivityIndicator, StyleSheet } from "react-native";
 
 export default function Index() {
-  const [loading, setLoading] = useState(true);
-  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [categoryProducts, setCategoryProducts] = useState<Product[]>([]);
-
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      // Fetch Featured products from the API
-      const products = await fetchFeaturedProducts(10);
-      setFeaturedProducts(products);
-
-      // Fetch all available categories from the API
-      const categoryData = await fetchAllCategories();
-      setCategories(categoryData);
-
-      // Fetch Product by Category
-      if (categoryData.length > 0) {
-        const defaultCategory = categoryData[0];
-        const categoryProductData =
-          await fetchFeaturedProductsByCategory(defaultCategory);
-        setCategoryProducts(categoryProductData);
-        setSelectedCategory(defaultCategory);
-      }
-    } catch (error) {
-      console.error("Error loading data on index page", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCategorySelect = async (category: string | null) => {
-    setSelectedCategory(category);
-    if (!category) {
-      // if All is selected
-      setCategoryProducts(featuredProducts);
-      return;
-    }
-    try {
-      const products = await fetchFeaturedProductsByCategory(category);
-      setCategoryProducts(products);
-    } catch (error) {
-      console.error("Error fetching products by category", error);
-    }
-  };
+  const { user, loading } = useAuth();
+  const router = useRouter();
+  const segments = useSegments();
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (loading) return;
+
+    if (!user) {
+      // User is not authenticated, redirect to sign-in
+      if (segments[0] !== "auth") {
+        router.replace("/auth/sign-in");
+      }
+    } else {
+      // User is authenticated, redirect to tabs
+      if (segments[0] === "auth") {
+        router.replace("/(tabs)");
+      } else if (segments[0] !== "(tabs)" && segments[0] !== "product") {
+        router.replace("/(tabs)");
+      }
+    }
+  }, [user, loading, segments]);
 
   return (
-    <>
-      <Stack.Screen
-        // name="Home"
-        options={{
-          headerTitle: "My Store",
-          headerRight: () => <CartIcon />,
-        }}
-      />
-      <View style={styles.container}>
-        <SearchBar
-          onSearch={(query) => {
-            if (query.trim()) {
-              router.push({
-                pathname: "/product-listing",
-                params: { query },
-              });
-            }
-          }}
-        />
-        <ProductCarousel
-          products={featuredProducts}
-          title="Featured Products"
-          style={{ marginBottom: 16 }}
-        />
-        <View style={{ maxHeight: 80 }}>
-          <CategoryPill
-            categories={categories}
-            onSelectCategory={handleCategorySelect}
-            selectedCategory={selectedCategory}
-          />
-        </View>
-        <View style={styles.categoryProductContainer}>
-          {categoryProducts.length > 0 ? (
-            <ProductCarousel
-              products={categoryProducts}
-              title={
-                selectedCategory
-                  ? `Product in ${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}`
-                  : "All Products"
-              }
-            />
-          ) : (
-            <Text style={styles.noProductsText}>
-              No products found in this category.
-            </Text>
-          )}
-        </View>
-      </View>
-    </>
+    <View style={styles.container}>
+      <ActivityIndicator size="large" color="#5B37B7" />
+    </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f9f9f9",
-    paddingHorizontal: 16,
-    paddingTop: 16,
-  },
-  categoryProductContainer: {
-    marginTop: 8,
-  },
-  noProductsText: {
-    textAlign: "center",
-    color: "#888",
-    marginTop: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
   },
 });
