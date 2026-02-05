@@ -1,7 +1,8 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { View } from "react-native";
 import CartIcon from "@/components/cart-icon";
-import UserMenuIcon from "@/components/user-menu-icon";
+import AuthButton from "@/components/auth-button";
 
 export default function TabsLayout() {
   return (
@@ -16,7 +17,12 @@ export default function TabsLayout() {
         headerTitleStyle: {
           fontWeight: "bold",
         },
-        headerLeft: () => <UserMenuIcon />,
+        headerRight: () => (
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <AuthButton />
+            <CartIcon />
+          </View>
+        ),
       }}
     >
       <Tabs.Screen
@@ -25,7 +31,6 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" size={size} color={color} />
           ),
-          headerRight: () => <CartIcon />,
         }}
       />
       <Tabs.Screen

@@ -6,7 +6,7 @@ import {
   fetchFeaturedProductsByCategory,
 } from "@/api/product-service";
 import CartIcon from "@/components/cart-icon";
-import UserMenuIcon from "@/components/user-menu-icon";
+import AuthButton from "@/components/auth-button";
 import type { Product } from "@/types";
 import { router, Stack } from "expo-router";
 import CategoryPill from "@/components/category-pill";
@@ -95,7 +95,12 @@ export default function Index() {
               {getGreeting()}, <Text style={styles.headerUsername}>{getUsername(user)}</Text>
             </Text>
           ),
-          headerLeft: () => <UserMenuIcon />,
+          headerRight: () => (
+            <View style={styles.headerRight}>
+              <AuthButton />
+              <CartIcon />
+            </View>
+          ),
         }}
       />
       <ScrollView
@@ -171,6 +176,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     color: "#5B37B7",
+  },
+  headerRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
   searchBarContainer: {
     marginBottom: 20,
