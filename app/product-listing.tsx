@@ -11,7 +11,7 @@ import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import ProductCard from "@/components/product-card";
 import SearchBar from "@/components/search-bar";
 import CartIcon from "@/components/cart-icon";
-import { searchPorducts } from "@/api/product-service";
+import { searchProducts } from "@/api/product-service";
 import type { Product } from "@/types";
 import { useEffect, useState } from "react";
 
@@ -30,7 +30,7 @@ const ProductListingScreen = () => {
     try {
       setLoading(true);
       const QueryToUse = searchQuery ?? query ?? "";
-      const results = await searchPorducts(QueryToUse);
+      const results = await searchProducts(QueryToUse);
       setProducts(results);
     } catch (error) {
       console.error("Error loading products in listing page", error);
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#f8f8f",
+    backgroundColor: "#f8f8f8",
   },
   productList: {
     padding: 8,
