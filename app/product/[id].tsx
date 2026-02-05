@@ -71,7 +71,7 @@ const ProductDetailScreen = () => {
         },
         {
           text: "View Cart",
-          onPress: () => router.push("/cart"),
+          onPress: () => router.push("/(tabs)/cart"),
         },
       ]);
     }
@@ -109,83 +109,139 @@ const ProductDetailScreen = () => {
   }
 
   return (
-    <>
+    <View style={styles.wrapper}>
       <Stack.Screen
         options={{
-          headerTitle: "Product Details",
-          headerRight: () => <CartIcon />,
+          headerTitle: "",
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => {
+                router.dismissAll();
+                router.replace("/");
+              }}
+              style={styles.headerButton}
+            >
+              <Ionicons name="arrow-back" size={24} color="#333" />
+            </TouchableOpacity>
+          ),
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => router.push("/(tabs)/cart")}
+              style={styles.headerButton}
+            >
+              <CartIcon />
+            </TouchableOpacity>
+          ),
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerShadowVisible: false,
         }}
       />
-      <ScrollView style={styles.container}>
-        <Image source={{ uri: product.image }} style={styles.image} />
-        <View style={styles.content}>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={true}
+        nestedScrollEnabled={true}
+      >
+        {/* Product Image Section */}
+        <View style={styles.imageSection}>
+          <Image source={{ uri: product.image }} style={styles.image} />
+        </View>
+
+        {/* Product Info Card */}
+        <View style={styles.card}>
           <Text style={styles.title}>{product.title}</Text>
 
           <View style={styles.priceRatingRow}>
             <Text style={styles.price}>${product.price.toFixed(2)}</Text>
             {product.rating && (
               <View style={styles.ratingContainer}>
-                <Ionicons name="star" size={16} color="#FFD700" />
+                <Ionicons name="star" size={18} color="#FFD700" />
                 <Text style={styles.rating}>
-                  {product.rating.rate} ({product.rating.count} reviews)
+                  {product.rating.rate}
+                </Text>
+                <Text style={styles.reviewCount}>
+                  ({product.rating.count} reviews)
                 </Text>
               </View>
             )}
           </View>
 
-          <View style={styles.categoryContainer}>
-            <Text style={styles.categoryLabel}>Category:</Text>
+          <View style={styles.divider} />
+
+          <View style={styles.categorySection}>
+            <Text style={styles.sectionLabel}>Category</Text>
             <Text style={styles.category}>
               {product.category.charAt(0).toUpperCase() +
                 product.category.slice(1)}
             </Text>
           </View>
+        </View>
 
-          <View style={styles.descriptionContainer}>
-            <Text style={styles.descriptionLabel}>Description:</Text>
-            <Text style={styles.description}>{product.description}</Text>
-          </View>
+        {/* Description Card */}
+        <View style={styles.card}>
+          <Text style={styles.sectionTitle}>About this item</Text>
+          <Text style={styles.description}>{product.description}</Text>
+        </View>
 
-          <View style={styles.quantityContainer}>
-            <Text style={styles.quantityLabel}>Quantity:</Text>
+        {/* Quantity & Add to Cart Card */}
+        <View style={styles.card}>
+          <Text style={styles.sectionTitle}>Quantity</Text>
+          <View style={styles.quantitySection}>
             <View style={styles.quantityControls}>
               <TouchableOpacity
                 style={styles.quantityButton}
                 onPress={decreaseQuantity}
               >
-                <Ionicons name="remove" size={20} color="#333" />
+                <Ionicons name="remove" size={22} color="#333" />
               </TouchableOpacity>
               <Text style={styles.quantityText}>{quantity}</Text>
               <TouchableOpacity
                 style={styles.quantityButton}
                 onPress={increaseQuantity}
               >
-                <Ionicons name="add" size={20} color="#333" />
+                <Ionicons name="add" size={22} color="#333" />
               </TouchableOpacity>
             </View>
+            <Text style={styles.subtotalText}>
+              Subtotal: ${(product.price * quantity).toFixed(2)}
+            </Text>
           </View>
 
           <TouchableOpacity
             style={styles.addToCartButton}
             onPress={handleAddToCart}
           >
-            <Ionicons name="cart" size={20} color="#fff" />
+            <Ionicons name="cart" size={22} color="#fff" />
             <Text style={styles.addToCartText}>
-              Add {quantity} to Cart (${(product.price * quantity).toFixed(2)})
+              Add {quantity} to Cart
             </Text>
           </TouchableOpacity>
         </View>
+
       </ScrollView>
-    </>
+    </View>
   );
 };
 
 export default ProductDetailScreen;
 
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#f5f7fa",
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 20,
+  },
+  headerButton: {
+    padding: 8,
+    marginLeft: 8,
   },
   loadingContainer: {
     flex: 1,
@@ -221,20 +277,47 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+  imageSection: {
+    backgroundColor: "#fff",
+    marginBottom: 12,
+    paddingVertical: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
   image: {
     width: "100%",
-    height: 400,
-    backgroundColor: "#f0f0f0",
+    height: 350,
+    backgroundColor: "#fafafa",
     resizeMode: "contain",
   },
-  content: {
+  card: {
+    backgroundColor: "#fff",
+    marginHorizontal: 16,
+    marginBottom: 12,
     padding: 20,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#1a1a1a",
     marginBottom: 12,
+    lineHeight: 30,
   },
   priceRatingRow: {
     flexDirection: "row",
@@ -243,102 +326,118 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   price: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: "bold",
     color: "#5B37B7",
+    letterSpacing: -0.5,
   },
   ratingContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f8f8f8",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
+    gap: 4,
   },
   rating: {
-    marginLeft: 4,
-    fontSize: 14,
-    color: "#666",
-  },
-  categoryContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
-  },
-  categoryLabel: {
     fontSize: 16,
     fontWeight: "600",
+    color: "#333",
+    marginLeft: 2,
+  },
+  reviewCount: {
+    fontSize: 14,
     color: "#666",
-    marginRight: 8,
+    marginLeft: 4,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#e5e7eb",
+    marginVertical: 16,
+  },
+  categorySection: {
+    marginTop: 8,
+  },
+  sectionLabel: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#666",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    marginBottom: 6,
   },
   category: {
     fontSize: 16,
     color: "#333",
     textTransform: "capitalize",
+    fontWeight: "500",
   },
-  descriptionContainer: {
-    marginBottom: 24,
-  },
-  descriptionLabel: {
+  sectionTitle: {
     fontSize: 18,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 8,
+    fontWeight: "700",
+    color: "#1a1a1a",
+    marginBottom: 12,
   },
   description: {
-    fontSize: 16,
-    color: "#666",
+    fontSize: 15,
+    color: "#4a4a4a",
     lineHeight: 24,
+    letterSpacing: 0.2,
   },
-  quantityContainer: {
-    marginBottom: 24,
-    paddingBottom: 24,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
-  },
-  quantityLabel: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 12,
+  quantitySection: {
+    marginTop: 8,
   },
   quantityControls: {
     flexDirection: "row",
     alignItems: "center",
-    alignSelf: "flex-start",
-    backgroundColor: "#f8f8f8",
-    borderRadius: 8,
+    backgroundColor: "#f8f9fa",
+    borderRadius: 10,
     padding: 4,
+    alignSelf: "flex-start",
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
   },
   quantityButton: {
-    padding: 8,
-    minWidth: 40,
+    padding: 10,
+    minWidth: 44,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "#fff",
+    borderRadius: 8,
   },
   quantityText: {
     fontSize: 18,
-    fontWeight: "bold",
-    paddingHorizontal: 16,
-    minWidth: 40,
+    fontWeight: "700",
+    paddingHorizontal: 20,
+    minWidth: 50,
     textAlign: "center",
+    color: "#1a1a1a",
+  },
+  subtotalText: {
+    fontSize: 16,
+    color: "#666",
+    marginTop: 12,
+    fontWeight: "500",
   },
   addToCartButton: {
     backgroundColor: "#5B37B7",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 16,
+    paddingVertical: 18,
     borderRadius: 12,
-    marginBottom: 20,
+    marginTop: 20,
+    gap: 10,
+    shadowColor: "#5B37B7",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   addToCartText: {
     color: "#fff",
     fontSize: 18,
-    fontWeight: "bold",
-    marginLeft: 8,
+    fontWeight: "700",
+    letterSpacing: 0.3,
   },
 });

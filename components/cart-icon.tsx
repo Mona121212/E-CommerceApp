@@ -11,7 +11,7 @@ const CartIcon = (props: CartIconProps = { color: "#333", size: 30 }) => {
   return (
     <TouchableOpacity
       style={styles.container}
-      onPress={() => router.push({ pathname: "/cart" } as any)}
+      onPress={() => router.push("/(tabs)/cart")}
       activeOpacity={0.7}
     >
       <Ionicons name="cart-outline" size={24} color={props.color} />

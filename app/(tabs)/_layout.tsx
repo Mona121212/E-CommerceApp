@@ -1,21 +1,30 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import CartIcon from "@/components/cart-icon";
 
 export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: "#5B37B7",
-        headerShown: false,
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: "#fff",
+        },
+        headerTintColor: "#333",
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          title: "My Store",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" size={size} color={color} />
           ),
+          headerRight: () => <CartIcon />,
         }}
       />
       <Tabs.Screen

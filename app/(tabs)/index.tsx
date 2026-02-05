@@ -86,14 +86,7 @@ export default function Index() {
   }, []);
 
   return (
-    <>
-      <Stack.Screen
-        options={{
-          headerTitle: "My Store",
-          headerRight: () => <CartIcon />,
-        }}
-      />
-      <View style={styles.container}>
+    <View style={styles.container}>
         <View style={styles.greetingContainer}>
           <Text style={styles.greetingText}>
             {getGreeting()}, <Text style={styles.usernameText}>{getUsername()}</Text>
@@ -138,7 +131,6 @@ export default function Index() {
           )}
         </View>
       </View>
-    </>
   );
 }
 const styles = StyleSheet.create({
