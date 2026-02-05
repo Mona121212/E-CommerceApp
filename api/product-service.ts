@@ -1,4 +1,6 @@
 import { Product } from "../types";
+import { db } from "@/config/firebase";  
+import { collection, getDocs, query, where } from "firebase/firestore";  
 
 const BASE_URL =
   process.env.EXPO_PUBLIC_FAKESTORE_API_URL || "https://fakestoreapi.com";
@@ -46,7 +48,7 @@ export const fetchAllCategories = async (): Promise<string[]> => {
   }
 };
 
-export const searchPorducts = async (query: string): Promise<Product[]> => {
+export const searchProducts = async (query: string): Promise<Product[]> => {
   try {
     const response = await fetch(`${BASE_URL}/Products`);
     const data = (await response.json()) as Product[];
@@ -60,7 +62,7 @@ export const searchPorducts = async (query: string): Promise<Product[]> => {
     return data.filter(
       (product) =>
         product.title.toLowerCase().includes(lowerCaseQuery) ||
-        product.category.toLocaleLowerCase().includes(lowerCaseQuery) ||
+        product.category.toLowerCase().includes(lowerCaseQuery) ||
         product.description.toLowerCase().includes(lowerCaseQuery),
     );
   } catch (error) {
@@ -71,7 +73,7 @@ export const searchPorducts = async (query: string): Promise<Product[]> => {
 
 export const fetchProductById = async (id: string): Promise<Product | null> => {
   try {
-    const response = await fetch(`{BASE_URL}/products/${id}`);
+    const response = await fetch(`${BASE_URL}/products/${id}`);
     const data = await response.json();
     return data as Product;
   } catch (error) {
