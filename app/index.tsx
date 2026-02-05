@@ -11,18 +11,24 @@ export default function Index() {
   useEffect(() => {
     if (loading) return;
 
-    if (!user) {
-      // User is not authenticated, redirect to sign-in
-      if (segments[0] !== "auth") {
-        router.replace("/auth/sign-in");
-      }
-    } else {
-      // User is authenticated, redirect to tabs
-      if (segments[0] === "auth") {
-        router.replace("/(tabs)");
-      } else if (segments[0] !== "(tabs)" && segments[0] !== "product") {
-        router.replace("/(tabs)");
-      }
+    // Allow users to browse products without login
+    // Default behavior: redirect to tabs (product browsing page)
+    
+    // If on root path, always redirect to tabs to browse products
+    if (segments.length === 0) {
+      router.replace("/(tabs)");
+      return;
+    }
+
+    // If logged in and on auth page, redirect to tabs
+    if (user && segments[0] === "auth") {
+      router.replace("/(tabs)");
+      return;
+    }
+
+    // If not on tabs, product, or auth pages, redirect to tabs
+    if (segments[0] !== "(tabs)" && segments[0] !== "product" && segments[0] !== "auth") {
+      router.replace("/(tabs)");
     }
   }, [user, loading, segments]);
 
