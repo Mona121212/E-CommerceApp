@@ -1,6 +1,7 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import CartIcon from "@/components/cart-icon";
+import UserMenuIcon from "@/components/user-menu-icon";
 
 export default function TabsLayout() {
   return (
@@ -15,6 +16,7 @@ export default function TabsLayout() {
         headerTitleStyle: {
           fontWeight: "bold",
         },
+        headerLeft: () => <UserMenuIcon />,
       }}
     >
       <Tabs.Screen

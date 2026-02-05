@@ -6,6 +6,7 @@ import {
   fetchFeaturedProductsByCategory,
 } from "@/api/product-service";
 import CartIcon from "@/components/cart-icon";
+import UserMenuIcon from "@/components/user-menu-icon";
 import type { Product } from "@/types";
 import { router, Stack } from "expo-router";
 import CategoryPill from "@/components/category-pill";
@@ -94,6 +95,7 @@ export default function Index() {
               {getGreeting()}, <Text style={styles.headerUsername}>{getUsername(user)}</Text>
             </Text>
           ),
+          headerLeft: () => <UserMenuIcon />,
         }}
       />
       <ScrollView
