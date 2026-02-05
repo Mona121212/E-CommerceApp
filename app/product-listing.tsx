@@ -55,7 +55,7 @@ const ProductListingScreen = () => {
       style={styles.productCard}
       onPress={() => {
         router.push({
-          pathname: `/(tabs)/product/${item.id}`,
+          pathname: `/product/${item.id}`,
           params: {
             initialData: JSON.stringify(item),
           },

@@ -11,6 +11,7 @@ function RootLayoutNav() {
       <Stack.Screen name="auth/sign-up" options={{ title: "Sign Up" }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="product-listing" />
+      <Stack.Screen name="product/[id]" />
     </Stack>
   );
 }

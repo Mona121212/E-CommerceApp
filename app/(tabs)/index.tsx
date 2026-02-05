@@ -98,29 +98,32 @@ export default function Index() {
             {getGreeting()}, <Text style={styles.usernameText}>{getUsername()}</Text>
           </Text>
         </View>
-        <SearchBar
-          onSearch={(query) => {
-            if (query.trim()) {
-              router.push({
-                pathname: "/product-listing",
-                params: { query },
-              });
-            }
-          }}
-        />
-        <ProductCarousel
-          products={featuredProducts}
-          title="Featured Products"
-          style={{ marginBottom: 16 }}
-        />
-        <View style={{ maxHeight: 80 }}>
+        <View style={styles.searchBarContainer}>
+          <SearchBar
+            onSearch={(query) => {
+              if (query.trim()) {
+                router.push({
+                  pathname: "/product-listing",
+                  params: { query },
+                });
+              }
+            }}
+          />
+        </View>
+        <View style={styles.sectionContainer}>
+          <ProductCarousel
+            products={featuredProducts}
+            title="Featured Products"
+          />
+        </View>
+        <View style={styles.categoryContainer}>
           <CategoryPill
             categories={categories}
             onSelectCategory={handleCategorySelect}
             selectedCategory={selectedCategory}
           />
         </View>
-        <View style={styles.categoryProductContainer}>
+        <View style={styles.sectionContainer}>
           {categoryProducts.length > 0 ? (
             <ProductCarousel
               products={categoryProducts}
@@ -150,12 +153,12 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingTop: 20,
     paddingBottom: 20,
   },
   greetingContainer: {
-    marginBottom: 16,
-    paddingVertical: 8,
+    marginBottom: 20,
+    paddingVertical: 4,
   },
   greetingText: {
     fontSize: 24,
@@ -168,8 +171,15 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#5B37B7",
   },
-  categoryProductContainer: {
-    marginTop: 8,
+  searchBarContainer: {
+    marginBottom: 20,
+  },
+  sectionContainer: {
+    marginBottom: 20,
+  },
+  categoryContainer: {
+    marginBottom: 20,
+    maxHeight: 80,
   },
   noProductsText: {
     textAlign: "center",

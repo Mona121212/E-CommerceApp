@@ -17,7 +17,7 @@ const ProductCarousel = ({ products, title, style }: ProductCarouselProps) => {
   }
   const handleProductPress = (product: Product) => {
     router.push({
-      pathname: `/(tabs)/product/${product.id}`,
+      pathname: `/product/${product.id}`,
       params: { initialData: JSON.stringify(product) },
     });
   };
@@ -43,12 +43,14 @@ const ProductCarousel = ({ products, title, style }: ProductCarouselProps) => {
 export default ProductCarousel;
 
 const styles = StyleSheet.create({
-  container: { marginVertical: 16 },
+  container: {
+    marginVertical: 0,
+  },
   title: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 12,
-    paddingHorizontal: 16,
+    paddingHorizontal: 0,
     color: "#333",
   },
   listContainer: {

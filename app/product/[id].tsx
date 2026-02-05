@@ -112,13 +112,11 @@ const ProductDetailScreen = () => {
     <View style={styles.wrapper}>
       <Stack.Screen
         options={{
+          headerShown: true,
           headerTitle: "",
           headerLeft: () => (
             <TouchableOpacity
-              onPress={() => {
-                router.dismissAll();
-                router.replace("/");
-              }}
+              onPress={() => router.back()}
               style={styles.headerButton}
             >
               <Ionicons name="arrow-back" size={24} color="#333" />
