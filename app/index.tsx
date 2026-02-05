@@ -19,7 +19,7 @@ export default function Index() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [categoryProducts, setCategoryProducts] = useState<Product[]>([]);
 
-  const loadDate = async () => {
+  const loadData = async () => {
     try {
       setLoading(true);
       // Fetch Featured products from the API
@@ -61,7 +61,7 @@ export default function Index() {
   };
 
   useEffect(() => {
-    loadDate();
+    loadData();
   }, []);
 
   return (
