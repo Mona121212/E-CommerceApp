@@ -16,12 +16,17 @@ function RootLayoutNav() {
   );
 }
 
+function CartProviderWrapper({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
+  return <CartProvider userId={user?.uid || null}>{children}</CartProvider>;
+}
+
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <CartProvider>
+      <CartProviderWrapper>
         <RootLayoutNav />
-      </CartProvider>
+      </CartProviderWrapper>
     </AuthProvider>
   );
 }

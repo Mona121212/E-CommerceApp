@@ -12,43 +12,98 @@ import React, {
   useEffect,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  collection,
+  doc,
+  setDoc,
+  getDoc,
+  onSnapshot,
+} from "firebase/firestore";
+import { db } from "@/config/firebase";
 
 // Create the Cart Context
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 // Create the Provider component
 
-export const CartProvider = ({ children }: CartProviderProps) => {
+export const CartProvider = ({ children, userId }: CartProviderProps) => {
   const [items, setItems] = useState<CartItem[]>([]);
 
-  // Load cart items from AsyncStorage on mount
-
+  // Load cart from Firestore if user is logged in, otherwise from AsyncStorage
   useEffect(() => {
     const loadCart = async () => {
       try {
-        const savedCart = await AsyncStorage.getItem("cart");
-        if (savedCart) {
-          setItems(JSON.parse(savedCart));
+        if (userId) {
+          // Load from Firestore for logged-in users
+          const cartRef = doc(db, "carts", userId);
+          const cartSnap = await getDoc(cartRef);
+          
+          if (cartSnap.exists()) {
+            const cartData = cartSnap.data();
+            setItems(cartData.items || []);
+          } else {
+            // If no cart exists in Firestore, try to migrate from AsyncStorage
+            const savedCart = await AsyncStorage.getItem("cart");
+            if (savedCart) {
+              const parsedCart = JSON.parse(savedCart);
+              setItems(parsedCart);
+              // Save to Firestore
+              await setDoc(cartRef, { items: parsedCart });
+              // Clear AsyncStorage after migration
+              await AsyncStorage.removeItem("cart");
+            }
+          }
+        } else {
+          // Load from AsyncStorage for guest users
+          const savedCart = await AsyncStorage.getItem("cart");
+          if (savedCart) {
+            setItems(JSON.parse(savedCart));
+          }
         }
       } catch (error) {
-        console.error("Error loading cart from storage", error);
+        console.error("Error loading cart:", error);
+        // Fallback to AsyncStorage on error
+        try {
+          const savedCart = await AsyncStorage.getItem("cart");
+          if (savedCart) {
+            setItems(JSON.parse(savedCart));
+          }
+        } catch (fallbackError) {
+          console.error("Error loading cart from storage", fallbackError);
+        }
       }
     };
     loadCart();
-  }, []);
+  }, [userId]);
 
-  // Save cart items to AsyncStorage whenever they change
-
+  // Sync cart to Firestore (for logged-in users) or AsyncStorage (for guests)
   useEffect(() => {
     const saveCart = async () => {
       try {
-        await AsyncStorage.setItem("cart", JSON.stringify(items));
+        if (userId) {
+          // Save to Firestore for logged-in users
+          const cartRef = doc(db, "carts", userId);
+          await setDoc(cartRef, { items }, { merge: true });
+        } else {
+          // Save to AsyncStorage for guest users
+          await AsyncStorage.setItem("cart", JSON.stringify(items));
+        }
       } catch (error) {
-        console.error("Error saving cart to storage", error);
+        console.error("Error saving cart:", error);
+        // Fallback to AsyncStorage on error
+        try {
+          await AsyncStorage.setItem("cart", JSON.stringify(items));
+        } catch (fallbackError) {
+          console.error("Error saving cart to storage", fallbackError);
+        }
       }
     };
-    saveCart();
-  }, [items]);
+    
+    // Only save if items have been loaded (avoid saving empty cart on initial load)
+    if (items.length > 0 || userId) {
+      saveCart();
+    }
+  }, [items, userId]);
 
   // Add product to cart
   const addItem = (product: Product, quantity: number) => {
@@ -96,6 +151,28 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     setItems([]);
   };
 
+  // Function to explicitly save cart (useful before sign out)
+  const saveCart = async () => {
+    try {
+      if (userId) {
+        // Save to Firestore for logged-in users
+        const cartRef = doc(db, "carts", userId);
+        await setDoc(cartRef, { items }, { merge: true });
+      } else {
+        // Save to AsyncStorage for guest users
+        await AsyncStorage.setItem("cart", JSON.stringify(items));
+      }
+    } catch (error) {
+      console.error("Error saving cart:", error);
+      // Fallback to AsyncStorage on error
+      try {
+        await AsyncStorage.setItem("cart", JSON.stringify(items));
+      } catch (fallbackError) {
+        console.error("Error saving cart to storage", fallbackError);
+      }
+    }
+  };
+
   // Function to get the total number of items in the cart
   const getItemCount = () => {
     return items.reduce((total, item) => total + item.quantity, 0);
@@ -119,6 +196,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         clearCart,
         getItemCount,
         getTotal,
+        saveCart,
       }}
     >
       {children}

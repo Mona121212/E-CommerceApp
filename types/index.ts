@@ -31,10 +31,12 @@ export interface CartContextType {
   clearCart: () => void;
   getItemCount: () => number;
   getTotal: () => number;
+  saveCart: () => Promise<void>;
 }
 
 export interface CartProviderProps {
   children: ReactNode;
+  userId?: string | null;
 }
 
 export interface CategoryPillProps {

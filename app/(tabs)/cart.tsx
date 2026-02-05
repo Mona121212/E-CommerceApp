@@ -11,17 +11,37 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useCart } from "@/context/cart-context";
+import { useAuth } from "@/context/auth-context";
 import { CartItem } from "@/types";
 import React from "react";
 
 const CartScreen = () => {
   const router = useRouter();
+  const { user } = useAuth();
   const { items, removeItem, clearCart, getTotal, updateQuantity } = useCart();
 
-  const handleCheckout = () => {
-    Alert.alert("Checkout", "Are you sure you want to proceed to checkout?", [
-      { text: "ok" },
-    ]);
+  const handleCheckout = async () => {
+    if (!user) {
+      Alert.alert("Login Required", "Please login to proceed with checkout");
+      router.push("/auth/sign-in");
+      return;
+    }
+
+    if (items.length === 0) {
+      Alert.alert("Empty Cart", "Your cart is empty");
+      return;
+    }
+
+    Alert.alert(
+      "Checkout",
+      `Total: $${getTotal().toFixed(2)}\n\nCheckout feature is coming soon!`,
+      [
+        {
+          text: "OK",
+          onPress: () => {},
+        },
+      ]
+    );
   };
 
   const handleClearCart = () => {
